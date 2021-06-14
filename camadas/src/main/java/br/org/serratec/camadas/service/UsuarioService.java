@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import br.org.serratec.camadas.config.MailConfig;
 import br.org.serratec.camadas.dto.UsuarioDTO;
 import br.org.serratec.camadas.dto.UsuarioInserirDTO;
 import br.org.serratec.camadas.exception.EmailException;
@@ -20,12 +21,17 @@ public class UsuarioService {
 	private UsuarioRepository usuarioRepository;
 	
 	@Autowired
+	private MailConfig mailConfig;
+	
+	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	public List<UsuarioDTO> listar() {
 		//return usuarioRepository.findAll();
 		List<UsuarioDTO> usuarioDTOs 	= new ArrayList<UsuarioDTO>();
 		List<Usuario> usuarios 			= usuarioRepository.findAll();
+		//long total = 0;
+		//total = usuarioRepository.count();
 		
 		for (Usuario usuario : usuarios) {
 			UsuarioDTO dto = new UsuarioDTO(usuario);
@@ -50,9 +56,10 @@ public class UsuarioService {
 		Usuario usuario = new Usuario();
 		usuario.setNome(usuarioInserirDTO.getNome());
 		usuario.setEmail(usuarioInserirDTO.getEmail());
-		usuario.setPerfil("### Usuário Padrão ###");
+		usuario.setPerfil("Usuário Padrão");
 		usuario.setSenha(bCryptPasswordEncoder.encode(usuarioInserirDTO.getSenha()));
-		usuario = usuarioRepository.save(usuario);
+		usuario =  usuarioRepository.save(usuario);
+		mailConfig.enviarEmail(usuarioInserirDTO.getEmail(), "### Cadastro de Usuário!! ###", usuario.toString());
 		return new UsuarioDTO(usuario);
 	}
 

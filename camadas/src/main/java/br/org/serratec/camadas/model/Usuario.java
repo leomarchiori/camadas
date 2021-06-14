@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.ManyToAny;
 
 @Entity
 public class Usuario {
@@ -18,6 +22,10 @@ public class Usuario {
 	private String perfil;
 	private String senha;
 
+	@ManyToOne
+	@JoinColumn(name = "id_endereco")
+	private Endereco endereco;
+	
 	public Usuario() {
 		// TODO Auto-generated constructor stub
 	}
@@ -29,6 +37,14 @@ public class Usuario {
 		this.email = email;
 		this.perfil = perfil;
 		this.senha = senha;
+	}
+
+	@Override
+	public String toString() {
+		return 	"Usuario" 			+ "\n" +
+				"Nome: " 	+ nome 	+ "\n" +
+				"Email: " 	+ email + "\n" +
+				"Perfil: " 	+ perfil;
 	}
 
 	public Long getId() {
